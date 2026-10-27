@@ -1,14 +1,12 @@
 @extends('layouts.app')
 
 @section('content')
-    <section>
-        <p>Account management</p>
-
+    <section class="card">
         <h1>Customer Accounts</h1>
 
         <p>
-            {{ count($customers) }} customer records retrieved
-            from a temporary PHP array.
+            Customer records retrieved from the database using
+            Eloquent.
         </p>
 
         <div class="table-wrapper">
@@ -23,14 +21,20 @@
                 </thead>
 
                 <tbody>
-                    @foreach ($customers as $customer)
+                    @forelse ($customers as $customer)
                         <tr>
-                            <td>{{ $customer['id'] }}</td>
-                            <td>{{ $customer['full_name'] }}</td>
-                            <td>{{ $customer['email'] }}</td>
-                            <td>{{ $customer['phone'] }}</td>
+                            <td>{{ $customer->id }}</td>
+                            <td>{{ $customer->full_name }}</td>
+                            <td>{{ $customer->email }}</td>
+                            <td>{{ $customer->phone ?? 'N/A' }}</td>
                         </tr>
-                    @endforeach
+                    @empty
+                        <tr>
+                            <td colspan="4">
+                                No customer records found.
+                            </td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
