@@ -2,27 +2,31 @@
 
 @section('content')
     <section class="hero">
-        <p>Point of Sale Account Management</p>
+        <span class="eyebrow">
+            Point of Sale Account Management
+        </span>
 
         <h1>Welcome to BINIPOS</h1>
 
         <p>
-            View temporary customer and user account records
-            through this Laravel application.
+            Manage customer and user accounts through this
+            Laravel POS application.
         </p>
 
-        <a
-            class="button"
-            href="{{ route('customers.index') }}"
-        >
-            View Customers
-        </a>
+        <div class="hero-actions">
+            <a
+                class="button"
+                href="{{ route('customers.index') }}"
+            >
+                View Customers
+            </a>
 
-        <a
-            class="button"
-            href="{{ route('users.index') }}"
-        >
-            View Users
-        </a>
+            <a
+                class="button button-secondary"
+                href="{{ route('users.index') }}"
+            >
+                View Users
+            </a>
+        </div>
     </section>
 @endsection
