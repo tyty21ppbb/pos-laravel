@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="UTF-8">
 
@@ -9,11 +9,18 @@
     >
 
     <meta
+        name="csrf-token"
+        content="{{ csrf_token() }}"
+    >
+
+    <meta
         name="description"
         content="BINIPOS customer and user account management system"
     >
 
     <title>{{ $title ?? 'BINIPOS' }} | BINIPOS</title>
+
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
         * {
@@ -103,10 +110,43 @@
             background: #263550;
         }
 
+        .nav-user {
+            padding: 10px 12px;
+            color: #ffffff;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .logout-form {
+            display: inline;
+            margin: 0;
+        }
+
+        .logout-button {
+            padding: 10px 16px;
+            border: 0;
+            border-radius: 10px;
+            color: #ffffff;
+            background: #2563eb;
+            font: inherit;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .logout-button:hover {
+            background: #1d4ed8;
+        }
+
         /* Main page */
         .main-content {
             flex: 1;
             padding: 72px 0;
+        }
+
+        .page-header {
+            padding: 24px 0;
+            border-bottom: 1px solid #dce5f1;
+            background: #ffffff;
         }
 
         .eyebrow {
@@ -318,6 +358,7 @@
 
         .field input[type="text"],
         .field input[type="email"],
+        .field input[type="password"],
         .field input[type="file"] {
             display: block;
             width: 100%;
@@ -370,7 +411,7 @@
             text-decoration: underline;
         }
 
-        /* Avatar field on user edit page */
+        /* Avatar field */
         .avatar-field {
             display: flex;
             align-items: center;
@@ -418,6 +459,10 @@
 
             .main-nav a {
                 padding: 8px 12px;
+                white-space: nowrap;
+            }
+
+            .nav-user {
                 white-space: nowrap;
             }
 
@@ -488,26 +533,73 @@
                         About
                     </a>
 
-                    <a
-                        href="{{ route('customers.index') }}"
-                        class="{{ request()->routeIs('customers.*')
-                            ? 'active'
-                            : '' }}"
-                    >
-                        Customers
-                    </a>
+                    @auth
+                        <a
+                            href="{{ route('customers.index') }}"
+                            class="{{ request()->routeIs('customers.*')
+                                ? 'active'
+                                : '' }}"
+                        >
+                            Customers
+                        </a>
 
-                    <a
-                        href="{{ route('users.index') }}"
-                        class="{{ request()->routeIs('users.*')
-                            ? 'active'
-                            : '' }}"
-                    >
-                        Users
-                    </a>
+                        <a
+                            href="{{ route('users.index') }}"
+                            class="{{ request()->routeIs('users.*')
+                                ? 'active'
+                                : '' }}"
+                        >
+                            Users
+                        </a>
+
+                        <span class="nav-user">
+                            {{ Auth::user()->full_name }}
+                        </span>
+
+                        <form
+                            class="logout-form"
+                            method="POST"
+                            action="{{ route('logout') }}"
+                        >
+                            @csrf
+
+                            <button
+                                class="logout-button"
+                                type="submit"
+                            >
+                                Logout
+                            </button>
+                        </form>
+                    @else
+                        <a
+                            href="{{ route('login') }}"
+                            class="{{ request()->routeIs('login')
+                                ? 'active'
+                                : '' }}"
+                        >
+                            Login
+                        </a>
+
+                        <a
+                            href="{{ route('register') }}"
+                            class="{{ request()->routeIs('register')
+                                ? 'active'
+                                : '' }}"
+                        >
+                            Register
+                        </a>
+                    @endauth
                 </nav>
             </div>
         </header>
+
+        @if (isset($header))
+            <section class="page-header">
+                <div class="container">
+                    {{ $header }}
+                </div>
+            </section>
+        @endif
 
         <main class="main-content">
             <div class="container">
@@ -529,7 +621,11 @@
                     </div>
                 @endif
 
-                @yield('content')
+                @if (isset($slot))
+                    {{ $slot }}
+                @else
+                    @yield('content')
+                @endif
             </div>
         </main>
 
